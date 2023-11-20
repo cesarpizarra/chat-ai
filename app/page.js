@@ -58,7 +58,7 @@ export default function Page() {
       }`}
     >
       <div className="md:flex justify-center items-center relative">
-        <div className="absolute top-[-20px]  md:top-0 right-0">
+        <div className="absolute top-[-55px]  md:top-0 right-0">
           <SliderToggle selected={selected} setSelected={setSelected} />
         </div>
         <div className="flex flex-col items-center justify-center">
