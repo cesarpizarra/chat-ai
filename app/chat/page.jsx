@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { BsSendExclamationFill } from "react-icons/bs";
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 import { FiMoon, FiSun } from "react-icons/fi";
 import axios from "axios";
 
@@ -91,7 +91,7 @@ const ChatInput = ({ onSendMessage }) => {
         value={message}
         onChange={handleMessageChange}
         placeholder="Ask a question..."
-        className="border-2 border-gray-300 p-2 flex-1 rounded-l-md text-black outline-none"
+        className="bg-transparent caret-emerald-500 border-b border-gray-300 p-2 flex-1 outline-none"
       />
 
       <div
@@ -107,12 +107,15 @@ const ChatInput = ({ onSendMessage }) => {
 const Form = () => {
   const [messages, setMessages] = useState([]);
   const [selected, setSelected] = useState("light");
+  const typingControls = useAnimation(); // Controls for typing animation
 
   const handleSendMessage = async (userMessage) => {
     const newUserMessage = { text: userMessage, isUser: true };
     setMessages((prevMessages) => [...prevMessages, newUserMessage]);
 
-    // Make API request to OpenAI using axios
+    // Show typing animation before sending request
+    await typingControls.start({ opacity: 1, width: "50%" });
+
     try {
       const response = await axios.post(
         "https://api.openai.com/v1/chat/completions",
@@ -133,12 +136,19 @@ const Form = () => {
 
       const data = response.data;
 
+      // Hide typing animation after receiving response
+      await typingControls.start({ opacity: 0, width: "0%" });
+
       // Extract the bot's response from the API data
       const botResponse = {
         text: data.choices[0].message.content,
         isUser: false,
       };
-      setMessages((prevMessages) => [...prevMessages, botResponse]);
+
+      // Add a delay before showing the actual response
+      setTimeout(() => {
+        setMessages((prevMessages) => [...prevMessages, botResponse]);
+      }, 500); // Adjust the delay as needed
     } catch (error) {
       console.error(
         "Error while fetching data from OpenAI API:",
@@ -149,7 +159,7 @@ const Form = () => {
 
   return (
     <div
-      className={`w-full h-screen   ${
+      className={`w-full min-h-screen   ${
         selected === "light" ? "bg-white" : "bg-slate-900 text-white"
       }`}
     >
@@ -168,6 +178,12 @@ const Form = () => {
               <ChatMessage key={index} message={msg.text} isUser={msg.isUser} />
             ))}
           </div>
+          <motion.div
+            animate={typingControls}
+            initial={{ opacity: 0, width: "0%" }}
+            transition={{ duration: 0.5 }}
+            className="h-6 mt-2 bg-gray-300 rounded-full overflow-hidden"
+          />
           <ChatInput onSendMessage={handleSendMessage} />
         </div>
       </div>
