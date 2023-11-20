@@ -61,12 +61,12 @@ export default function Page() {
         <div className="absolute top-[-150px]  md:top-0 right-0">
           <SliderToggle selected={selected} setSelected={setSelected} />
         </div>
-        <div className="flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center">
           <Image
             src={robot}
             alt="Robot Image"
             priority={true}
-            className="w-72 md:w-full bounce"
+            className="w-72 md:w-full bounce drop-shadow-lg"
           />
         </div>
         <div className="w-full flex flex-col items-center md:items-start ">

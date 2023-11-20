@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { BsSendExclamationFill } from "react-icons/bs";
 import { motion } from "framer-motion";
 import { FiMoon, FiSun } from "react-icons/fi";
+import axios from "axios";
 
 const TOGGLE_CLASSES =
   "text-sm font-medium flex items-center gap-2 px-3 md:pl-3 md:pr-3.5 py-3 md:py-1.5 transition-colors relative z-10";
@@ -51,7 +52,7 @@ const ChatMessage = ({ message, isUser }) => (
   <div className={`flex  ${isUser ? "justify-end py-6" : "justify-start"}`}>
     <div
       className={`bg-blue-500 text-white p-2 rounded-lg ${
-        isUser ? "bg-cyan-500" : "bg-gray-300"
+        isUser ? "bg-cyan-500" : "bg-gray-500"
       }`}
     >
       {message}
@@ -60,16 +61,18 @@ const ChatMessage = ({ message, isUser }) => (
 );
 
 const ChatInput = ({ onSendMessage }) => {
-  const [message, setMessage] = useState("");
+  const [message, setMessages] = useState("");
 
   const handleMessageChange = (e) => {
-    setMessage(e.target.value);
+    setMessages(e.target.value);
   };
 
   const handleSendMessage = () => {
-    if (message.trim() !== "") {
-      onSendMessage(message);
-      setMessage("");
+    const userMessage = message.trim();
+
+    if (userMessage) {
+      onSendMessage(userMessage);
+      setMessages("");
     }
   };
 
@@ -105,15 +108,43 @@ const Form = () => {
   const [messages, setMessages] = useState([]);
   const [selected, setSelected] = useState("light");
 
-  const handleSendMessage = (userMessage) => {
+  const handleSendMessage = async (userMessage) => {
     const newUserMessage = { text: userMessage, isUser: true };
     setMessages((prevMessages) => [...prevMessages, newUserMessage]);
 
-    // Simulate bot response after a delay
-    setTimeout(() => {
-      const botResponse = { text: "Bot response...", isUser: false };
+    // Make API request to OpenAI using axios
+    try {
+      const response = await axios.post(
+        "https://api.openai.com/v1/chat/completions",
+        {
+          model: "gpt-3.5-turbo-0301",
+          messages: [
+            { role: "system", content: "You are a helpful assistant." },
+            { role: "user", content: userMessage },
+          ],
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          },
+        }
+      );
+
+      const data = response.data;
+
+      // Extract the bot's response from the API data
+      const botResponse = {
+        text: data.choices[0].message.content,
+        isUser: false,
+      };
       setMessages((prevMessages) => [...prevMessages, botResponse]);
-    }, 500);
+    } catch (error) {
+      console.error(
+        "Error while fetching data from OpenAI API:",
+        error.response.data
+      );
+    }
   };
 
   return (
