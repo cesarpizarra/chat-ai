@@ -148,7 +148,7 @@ const Form = () => {
       // Add a delay before showing the actual response
       setTimeout(() => {
         setMessages((prevMessages) => [...prevMessages, botResponse]);
-      }, 500); // Adjust the delay as needed
+      }, 500); 
     } catch (error) {
       console.error(
         "Error while fetching data from OpenAI API:",
