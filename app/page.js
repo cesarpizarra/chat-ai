@@ -8,20 +8,8 @@ import SliderToggle from './components/SliderToggle';
 export default function Page() {
   const { theme, toggleTheme } = useTheme();
   return (
-<<<<<<< HEAD
     <div className="w-full h-screen px-4 bg-light-bg dark:bg-dark-bg flex flex-col items-center justify-center">
       <div className="md:flex justify-center items-center ">
-=======
-    <div
-      className={`w-full h-screen  px-4 flex flex-col items-center justify-center ${
-        selected === "light" ? "bg-white" : "bg-slate-900 text-white"
-      }`}
-    >
-      <div className="md:flex justify-center items-center relative">
-        <div className="absolute top-[-55px]  md:top-[-15px] right-0">
-          <SliderToggle selected={selected} setSelected={setSelected} />
-        </div>
->>>>>>> 0a146f11194d6e2e34ce069a900aa69720ab8eb5
         <div className="flex flex-col items-center justify-center">
           <Image
             src={robot}
