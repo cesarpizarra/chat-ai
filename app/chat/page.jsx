@@ -42,7 +42,7 @@ const Form = () => {
       // Hide typing animation after receiving response
       await typingControls.start({ opacity: 0, width: '0%' });
 
-      // Extract the bot's response from the API data
+      // Extract the bot's response 
       const botResponse = {
         text: data.choices[0].message.content,
         isUser: false,
@@ -51,7 +51,7 @@ const Form = () => {
       // Add a delay before showing the actual response
       setTimeout(() => {
         setMessages((prevMessages) => [...prevMessages, botResponse]);
-      }, 500); // Adjust the delay as needed
+      }, 500); 
     } catch (error) {
       console.error(
         'Error while fetching data from OpenAI API:',
